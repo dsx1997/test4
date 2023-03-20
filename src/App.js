@@ -89,13 +89,21 @@ class Game extends React.Component {
         squares : squares,
       }]),
       xIsNext : !this.state.xIsNext,
-      stepNumber : this.state.history.length,
+      stepNumber : history.length,
     });
     console.log('after squares =====');
     console.log('stepNumber : ', this.state.stepNumber);
     console.log('history === '); console.log(history);     console.log('history length === ', this.state.history.length);
     console.log('current === '); console.log(current);    
     console.log(squares);
+  }
+
+  jumpTo(move) {
+    console.log('jumpTo function : ', move);
+    this.setState({
+      stepNumber : move,
+      xIsNext : move % 2 === 0,
+    });
   }
 
   render() {
@@ -115,6 +123,15 @@ class Game extends React.Component {
       status = 'Next player: ' + (this.state.xIsNext === true ? 'X' : 'O');
     }   
 
+    const moves = history.map((step, move) => {
+      console.log('mapping : '); console.log('step : ', step); console.log('move : ', move);
+      let desc = move ? 'Go to move #' + move : 'Go to first game';
+      return (
+        <li key={move}>
+          <button onClick={() => this.jumpTo(move)} >{desc}</button>
+        </li>
+      );
+    });
     return (
       <div className="game">
         <div className="game-board">
@@ -122,7 +139,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{/* TODO */}</ol>
+          <ol>{moves}</ol>
         </div>
       </div>
     );
