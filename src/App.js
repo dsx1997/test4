@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 
@@ -9,74 +8,32 @@ function App() {
       
       <header className="App-header">
         <Game />
-           <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>     
       </header>      
       
     </div>
   );
 }
 
-class Square extends React.Component {
-  
-  render() {
+function Square(props) {
+
     return (
       
-      <button className="square" onClick={this.props.funcProps1}>
-        {this.props.valProps1}
+      <button className="square" onClick={props.funcProps1}>
+        {props.valProps1}
       </button>
     );
-  }
 }
 
 class Board extends React.Component {
 
-  handleClick(i) {
-    console.log('i : ' + i);
-    let squares = this.state.squares.slice();
-    if(judgeWinner(squares) || squares[i]) {
-      console.log('this is return case');
-      return;
-    }
-    squares[i] = (this.state.xIsNext === true) ? 'X' : 'O';
-    this.setState({
-      squares : squares,
-      xIsNext : !this.state.xIsNext,
-    });
-  }
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares : Array(9).fill(null),
-      xIsNext : true,
-    };
-  }
-  renderSquare(i) {
-    return <Square valProps1={this.state.squares[i]} funcProps1={()=>this.handleClick(i)} />;
+  renderSquare(i) {    
+    return <Square valProps1={this.props.valProps2[i]} funcProps1={() => this.props.funcProps2(i)} />;
   }
 
   render() {
-    let winner = judgeWinner(this.state.squares);
-    let status;
-    if(winner) {
-      status = 'Winner is: ' + winner;
-    } else {
-      status = 'Next player: ' + (this.state.xIsNext === true ? 'X' : 'O');
-    }   
 
     return (
       <div>
-        <div className="status">{status}</div>
         <div className="board-row">
           {this.renderSquare(0)}
           {this.renderSquare(1)}
@@ -98,18 +55,56 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      squares : Array(9).fill(null),
+      xIsNext : true,
+    };
+  }
+
+  handleClick(i) {
+    console.log('handleClick function : ', i);
+    let squares = this.state.squares.slice();
+    if(judgeWinner(squares) || squares[i]) {
+      console.log('return case');
+      return;
+    }
+    
+    console.log('before squares =====');
+    console.log(squares);
+    squares[i] = (this.state.xIsNext === true ? 'X' : 'O');
+    this.setState({
+      squares : squares,
+      xIsNext : !this.state.xIsNext,
+    });
+    console.log('after squares =====');
+    console.log(squares);
+  }
+
   render() {
+    
+    let winner = judgeWinner(this.state.squares);
+    let status;
+    if(winner) {
+      status = 'Winner is: ' + winner;
+    } else {
+      status = 'Next player: ' + (this.state.xIsNext === true ? 'X' : 'O');
+    }   
+
     return (
       <div className="game">
         <div className="game-board">
-          <Board />
+          <Board valProps2={this.state.squares} funcProps2={(i) => this.handleClick(i)}/>
         </div>
         <div className="game-info">
-          <div>{/* status */}</div>
+          <div>{status}</div>
           <ol>{/* TODO */}</ol>
         </div>
       </div>
     );
+
   }
 }
 
