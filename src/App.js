@@ -59,14 +59,23 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      squares : Array(9).fill(null),
+      history : [{
+        squares : Array(9).fill(null)
+      }],      
       xIsNext : true,
+      stepNumber : 0,
     };
   }
 
   handleClick(i) {
-    console.log('handleClick function : ', i);
-    let squares = this.state.squares.slice();
+    console.log('handleClick function ======================================== ', i);
+    console.log('stepNumber : ', this.state.stepNumber);
+    let history = this.state.history.slice(0, this.state.stepNumber + 1);
+    console.log('history === '); console.log(history);     console.log('history length === ', this.state.history.length);
+    let current = history[history.length - 1];
+    console.log('current === '); console.log(current);
+    let squares = current.squares.slice();
+
     if(judgeWinner(squares) || squares[i]) {
       console.log('return case');
       return;
@@ -76,16 +85,29 @@ class Game extends React.Component {
     console.log(squares);
     squares[i] = (this.state.xIsNext === true ? 'X' : 'O');
     this.setState({
-      squares : squares,
+      history : history.concat([{
+        squares : squares,
+      }]),
       xIsNext : !this.state.xIsNext,
+      stepNumber : this.state.history.length,
     });
     console.log('after squares =====');
+    console.log('stepNumber : ', this.state.stepNumber);
+    console.log('history === '); console.log(history);     console.log('history length === ', this.state.history.length);
+    console.log('current === '); console.log(current);    
     console.log(squares);
   }
 
   render() {
-    
-    let winner = judgeWinner(this.state.squares);
+    console.log('Game render part =======================================');
+    console.log('stepNumber : ', this.state.stepNumber);
+    let history = this.state.history.slice(0, this.state.stepNumber + 1);
+    console.log('history === '); console.log(history);
+    let current = history[history.length - 1];
+    console.log('current === '); console.log(current);
+    let squares = current.squares.slice();
+    console.log('squares === '); console.log(squares);
+    let winner = judgeWinner(squares);
     let status;
     if(winner) {
       status = 'Winner is: ' + winner;
@@ -96,7 +118,7 @@ class Game extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-          <Board valProps2={this.state.squares} funcProps2={(i) => this.handleClick(i)}/>
+          <Board valProps2={squares} funcProps2={(i) => this.handleClick(i)}/>
         </div>
         <div className="game-info">
           <div>{status}</div>
